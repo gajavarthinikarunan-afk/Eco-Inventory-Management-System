@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoStock | Premium Business Intelligence</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+</head>
+<body>
+
+    <div id="login-screen" class="auth-wrapper">
+        <div class="glass-card animate__animated animate__fadeInDown">
+            <div class="glass-logo">
+                <i class='bx bx-analyse'></i>
+            </div>
+            <h2>EcoStock <span class="thin">Pro</span></h2>
+            <p class="subtitle">Enterprise Inventory Solutions</p>
+            <div class="input-group">
+                <input type="text" id="user" placeholder="Username">
+                <input type="password" id="pass" placeholder="Password">
+            </div>
+            <button onclick="login()" class="glass-btn">Authorize Access</button>
+        </div>
+    </div>
+
+    <div id="dashboard" class="dashboard-layout hidden">
+        <aside class="glass-sidebar animate__animated animate__fadeInLeft">
+            <div class="sidebar-brand">
+                <i class='bx bx-leaf'></i> <span>EcoStock</span>
+            </div>
+            <nav class="side-nav">
+                <div class="nav-link active" onclick="showView('dashboard')"><i class='bx bxs-grid-alt'></i> Dashboard</div>
+                <div class="nav-link" onclick="showView('inventory')"><i class='bx bxs-component'></i> Inventory</div>
+                <div class="nav-link" onclick="showView('reports')"><i class='bx bxs-pie-chart-alt-2'></i> Reports</div>
+                <div class="nav-link logout" onclick="logout()"><i class='bx bx-power-off'></i> Sign Out</div>
+            </nav>
+        </aside>
+
+        <main class="content-area">
+            <!-- DASHBOARD VIEW -->
+            <div id="view-dashboard" class="view-section">
+                <header class="glass-header animate__animated animate__fadeInDown">
+                    <div class="header-info">
+                        <h1>Operational Overview</h1>
+                        <p>Thursday, 15 Jan 2026</p>
+                    </div>
+                    <button class="add-item-btn" onclick="openModal()">+ Add Asset</button>
+                </header>
+
+                <section class="stats-row">
+                    <div class="glass-stat animate__animated animate__zoomIn">
+                        <div class="stat-icon"><i class='bx bx-archive'></i></div>
+                        <div class="stat-val"><h3 id="stat-total">0</h3><p>Active Items</p></div>
+                    </div>
+                    <div class="glass-stat alert animate__animated animate__zoomIn animate__delay-1s">
+                        <div class="stat-icon"><i class='bx bx-trending-down'></i></div>
+                        <div class="stat-val"><h3 id="stat-low">0</h3><p>Critical Stock</p></div>
+                    </div>
+                </section>
+
+                <section class="glass-panel animate__animated animate__fadeInUp">
+                    <table id="inventoryTable">
+                        <thead>
+                            <tr>
+                                <th>Asset Name</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Qty</th>
+                                <th>Valuation</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryBody">
+                            </tbody>
+                    </table>
+                </section>
+            </div>
+
+            <!-- INVENTORY VIEW -->
+            <div id="view-inventory" class="view-section hidden">
+                <header class="glass-header animate__animated animate__fadeInDown">
+                    <div class="header-info">
+                        <h1>Inventory Management</h1>
+                        <p>Advanced Asset Control Center</p>
+                    </div>
+                    <button class="add-item-btn" onclick="openModal()">+ Add Asset</button>
+                </header>
+
+                <!-- Search & Filter Controls -->
+                <div class="inventory-controls-glass animate__animated animate__fadeInUp">
+                    <div style="display: flex; gap: 15px; flex: 1; align-items: center;">
+                        <div style="position: relative; flex: 1; max-width: 400px;">
+                            <i class='bx bx-search' style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); opacity: 0.5;"></i>
+                            <input type="text" id="invSearch" placeholder="Search assets..." 
+                                   oninput="renderInventoryGrid()"
+                                   style="padding-left: 40px; width: 65%; background: rgba(0,0,0,0.2); margin-bottom: 0;">
+                        </div>
+                        <select id="invFilter" onchange="renderInventoryGrid()" 
+                                style="width: 180px; background: rgba(0,0,0,0.2); margin-bottom: 0;">
+                            <option value="all">All Categories</option>
+                            <option value="Produce">Produce</option>
+                            <option value="Dairy">Dairy</option>
+                            <option value="Bakery">Bakery</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <span style="opacity: 0.6; font-size: 0.85rem;" id="item-count">0 items</span>
+                    </div>
+                </div>
+
+                <!-- Card Grid -->
+                <div id="inventory-grid" class="asset-grid animate__animated animate__fadeInUp"></div>
+            </div>
+
+            <!-- REPORTS VIEW -->
+            <div id="view-reports" class="view-section hidden">
+                <header class="glass-header animate__animated animate__fadeInDown">
+                    <div class="header-info">
+                        <h1>Analytics & Reports</h1>
+                        <p>Business Intelligence Dashboard</p>
+                    </div>
+                    <button class="add-item-btn" onclick="printReport()"><i class='bx bx-printer'></i> Print Report</button>
+                </header>
+
+                <div id="reportContent">
+                    <!-- Key Metrics Row -->
+                    <section class="stats-row">
+                        <div class="glass-stat animate__animated animate__zoomIn">
+                            <div class="stat-icon"><i class='bx bx-dollar-circle'></i></div>
+                            <div class="stat-val">
+                                <h3 id="report-total-value">$0.00</h3>
+                                <p>Total Inventory Value</p>
+                            </div>
+                        </div>
+                        <div class="glass-stat animate__animated animate__zoomIn animate__delay-1s">
+                            <div class="stat-icon"><i class='bx bx-trending-up'></i></div>
+                            <div class="stat-val">
+                                <h3 id="report-avg-price">$0.00</h3>
+                                <p>Avg Unit Price</p>
+                            </div>
+                        </div>
+                        <div class="glass-stat animate__animated animate__zoomIn animate__delay-2s">
+                            <div class="stat-icon"><i class='bx bx-package'></i></div>
+                            <div class="stat-val">
+                                <h3 id="report-total-items">0</h3>
+                                <p>Total Units</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Charts & Analytics -->
+                    <div class="report-grid">
+                        <!-- Category Breakdown -->
+                        <div class="glass-panel animate__animated animate__fadeInUp report-chart">
+                            <h3 style="margin-bottom: 20px; color: var(--accent);">
+                                <i class='bx bx-category'></i> Category Distribution
+                            </h3>
+                            <div id="categoryChart"></div>
+                        </div>
+
+                        <!-- Stock Status -->
+                        <div class="glass-panel animate__animated animate__fadeInUp animate__delay-1s report-chart">
+                            <h3 style="margin-bottom: 20px; color: var(--accent);">
+                                <i class='bx bx-error-circle'></i> Stock Status
+                            </h3>
+                            <div id="stockChart"></div>
+                        </div>
+
+                        <!-- Top Items by Value -->
+                        <div class="glass-panel animate__animated animate__fadeInUp animate__delay-2s report-table">
+                            <h3 style="margin-bottom: 20px; color: var(--accent);">
+                                <i class='bx bx-bar-chart-alt-2'></i> Top Items by Value
+                            </h3>
+                            <div id="topItemsList"></div>
+                        </div>
+
+                        <!-- Low Stock Alerts -->
+                        <div class="glass-panel animate__animated animate__fadeInUp animate__delay-3s report-table">
+                            <h3 style="margin-bottom: 20px; color: #ff6b6b;">
+                                <i class='bx bx-bell'></i> Low Stock Alerts
+                            </h3>
+                            <div id="lowStockList"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+
+    <div id="modal" class="modal-overlay hidden">
+        <div class="glass-card modal-content animate__animated animate__zoomIn">
+            <h3>Register New Asset</h3>
+            <input type="text" id="pName" placeholder="Item Name">
+            <select id="pCat">
+                <option value="Produce">Produce</option>
+                <option value="Dairy">Dairy</option>
+                <option value="Bakery">Bakery</option>
+            </select>
+            <input type="number" id="pQty" placeholder="Initial Quantity">
+            <input type="number" id="pPrice" placeholder="Unit Price (RM)">
+            <div class="modal-actions">
+                <button onclick="addItem()" class="save-btn">Confirm Entry</button>
+                <button onclick="closeModal()" class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
